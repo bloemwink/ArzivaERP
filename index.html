@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Arziva ERP · Accounting Software</title>
+  <style>
+    :root {
+      --primary: #c4a962;
+      --primary-dark: #a68b3f;
+      --sidebar-bg: #1a1f2b;
+      --bg: #f0f2f5;
+      --card: #ffffff;
+      --text: #1a1f2b;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --success: #059669;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --radius: 0.75rem;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); min-height: 100vh; }
+
+    .login-container {
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1f2b 0%, #2d3544 50%, #1a1f2b 100%);
+      padding: 2rem;
+    }
+    .login-card {
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .login-logo {
+      width: 130px;
+      height: 130px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      object-fit: contain;
+    }
+    .login-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a1f2b;
+      margin-bottom: 0.2rem;
+    }
+    .login-subtitle {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 1.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .login-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.7rem;
+      background: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 0.7rem;
+      transition: all 0.2s;
+      color: #1a1f2b;
+    }
+    .login-btn:hover { background: #f9fafb; border-color: #c4a962; }
+    .login-btn.google { border-color: #4285f4; color: #4285f4; }
+    .login-btn.google:hover { background: #f0f7ff; }
+    .login-btn.microsoft { border-color: #2b579a; color: #2b579a; }
+    .login-btn.microsoft:hover { background: #f0f4fa; }
+    .divider { display: flex; align-items: center; gap: 1rem; margin: 1.2rem 0; color: #9ca3af; font-size: 0.8rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+    .otp-input {
+      width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 0.7rem;
+      font-size: 0.9rem; text-align: center; letter-spacing: 4px; font-weight: 600; outline: none; margin-bottom: 0.7rem;
+    }
+    .otp-input:focus { border-color: #c4a962; }
+    .btn-primary {
+      width: 100%; padding: 0.8rem; background: #c4a962; color: #fff; border: none;
+      border-radius: 0.7rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s;
+    }
+    .btn-primary:hover { background: #a68b3f; }
+
+    .app-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px; background: var(--sidebar-bg); color: #fff; position: fixed;
+      top: 0; left: 0; bottom: 0; z-index: 50; overflow-y: auto; display: flex; flex-direction: column;
+    }
+    .sidebar-brand { padding: 1.2rem; text-align: center; border-bottom: 1px solid #2d3544; }
+    .sidebar-logo-sm { width: 70px; height: 70px; border-radius: 14px; margin-bottom: 0.4rem; object-fit: contain; }
+    .sidebar-biz-name { font-weight: 700; font-size: 0.95rem; color: #fff; }
+    .sidebar-biz-phone { font-size: 0.7rem; color: #9ca3af; }
+    .sidebar-create-btn {
+      display: block; width: 85%; margin: 0.8rem auto; padding: 0.6rem; background: var(--primary);
+      color: #fff; border: none; border-radius: 0.5rem; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-align: center;
+    }
+    .sidebar-nav { flex: 1; padding: 0.5rem 0; }
+    .sidebar-section { padding: 0.4rem 1rem; font-size: 0.65rem; text-transform: uppercase; color: #6b7280; letter-spacing: 1.5px; margin-top: 0.6rem; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.2rem; color: #cbd5e1;
+      cursor: pointer; font-size: 0.82rem; transition: 0.15s; border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover, .sidebar-link.active { background: #252d3a; color: #fff; border-left-color: var(--primary); }
+    .sidebar-link .icon { width: 20px; text-align: center; font-size: 1rem; }
+    .sidebar-footer { padding: 0.8rem; border-top: 1px solid #2d3544; font-size: 0.65rem; color: #6b7280; text-align: center; }
+
+    .main-area { margin-left: 250px; flex: 1; padding: 1.5rem; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem; }
+    .top-bar h2 { font-size: 1.3rem; color: var(--text); font-weight: 700; }
+    .badge { background: #fef3c7; color: #92400e; padding: 0.25rem 0.7rem; border-radius: 1rem; font-size: 0.7rem; font-weight: 600; }
+
+    .module { display: none; }
+    .module.active { display: block; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-box { background: var(--card); border-radius: var(--radius); padding: 1rem 1.2rem; box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .stat-value { font-size: 1.3rem; font-weight: 700; }
+
+    .card { background: var(--card); border-radius: var(--radius); padding: 1.2rem; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 1rem; }
+    .card h3 { font-size: 0.95rem; color: var(--text); margin-bottom: 0.8rem; font-weight: 600; }
+
+    .flex-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin: 0.4rem 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+    input, select, textarea {
+      width: 100%; background: #fff; border: 1.5px solid var(--border); border-radius: 0.5rem;
+      padding: 0.55rem 0.7rem; font-size: 0.85rem; outline: none; color: var(--text);
+    }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(196,169,98,0.1); }
+
+    .btn { background: var(--primary); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.82rem; cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: #fdfaf3; }
+    .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); }
+    .btn-warning { background: var(--warning); }
+
+    .list-container { max-height: 380px; overflow-y: auto; border-radius: 0.5rem; border: 1px solid var(--border); background: #fafafa; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th { background: #f3f4f6; padding: 0.6rem 0.5rem; text-align: left; font-weight: 600; color: var(--text); border-bottom: 2px solid var(--border); position: sticky; top: 0; }
+    td { padding: 0.5rem; border-bottom: 1px solid var(--border); }
+    tr:hover td { background: #fdfaf3; }
+
+    .autocomplete-wrap { position: relative; flex: 1; min-width: 150px; }
+    .autocomplete-dd { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1.5px solid var(--primary); border-radius: 0.5rem; max-height: 180px; overflow-y: auto; z-index: 99; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .autocomplete-dd.show { display: block; }
+    .autocomplete-item { padding: 0.5rem 0.8rem; cursor: pointer; font-size: 0.82rem; border-bottom: 1px solid #f3f4f6; color: var(--text); }
+    .autocomplete-item:hover { background: #fdfaf3; color: var(--primary-dark); }
+    .autocomplete-item .sub { font-size: 0.7rem; color: var(--text-muted); }
+
+    .tag { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.7rem; font-weight: 600; }
+    .tag-paid { background: #d1fae5; color: #065f46; }
+    .tag-unpaid { background: #fef3c7; color: #92400e; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: #fff; border-radius: 1rem; padding: 1.8rem; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .modal-box h3 { margin-bottom: 1rem; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; }
+      .sidebar-brand, .sidebar-create-btn, .sidebar-section, .sidebar-link span:not(.icon), .sidebar-biz-name, .sidebar-biz-phone { display: none; }
+      .sidebar-link { justify-content: center; padding: 0.7rem; }
+      .main-area { margin-left: 60px; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== LOGIN PAGE ==================== -->
+<div id="loginPage" class="login-container">
+  <div class="login-card">
+    
+    <!-- ARZIVA ERP LOGO - SVG -->
+    <svg width="140" height="140" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="border-radius:20px; margin-bottom:1rem;">
+      <defs>
+        <linearGradient id="goldGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#d4b860;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#c4a962;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#8b6914;stop-opacity:1" />
+        </linearGradient>
+        <filter id="shadow1">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+      <rect fill="url(#goldGrad1)" width="200" height="200" rx="28" filter="url(#shadow1)"/>
+      <!-- Inner border -->
+      <rect x="6" y="6" width="188" height="188" rx="24" fill="none" stroke="#f5ecd7" stroke-width="1.5" opacity="0.5"/>
+      <!-- ARZIVA text -->
+      <text x="100" y="72" text-anchor="middle" fill="#ffffff" font-size="36" font-weight="900" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="3">ARZIVA</text>
+      <!-- ERP text -->
+      <text x="100" y="105" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="700" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="8">ERP</text>
+      <!-- Divider line -->
+      <line x1="35" y1="120" x2="165" y2="120" stroke="#f5ecd7" stroke-width="1.5" opacity="0.7"/>
+      <!-- ACCOUNTING SOFTWARE -->
+      <text x="100" y="142" text-anchor="middle" fill="#f5ecd7" font-size="10" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="4" font-weight="600">ACCOUNTING</text>
+      <text x="100" y="157" text-anchor="middle" fill="#f5ecd7" font-size="10" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="4" font-weight="600">SOFTWARE</text>
+      <!-- RELIABLE -->
+      <text x="100" y="178" text-anchor="middle" fill="#f5ecd7" font-size="8" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="5">RELIABLE</text>
+    </svg>
+
+    <div class="login-title">Arziva ERP</div>
+    <div class="login-subtitle">Accounting Software</div>
+    
+    <button class="login-btn google" onclick="handleGoogleLogin()">
+      <span style="font-size:1.2rem;">🔵</span> Continue with Google
+    </button>
+    <button class="login-btn microsoft" onclick="handleMicrosoftLogin()">
+      <span style="font-size:1.2rem;">🔷</span> Continue with Microsoft
+    </button>
+    
+    <div class="divider">OR REGISTER VIA MOBILE</div>
+    <input type="tel" id="mobileInput" class="otp-input" placeholder="Enter Mobile Number" style="letter-spacing:1px;">
+    <button class="btn-primary" id="sendOtpBtn" style="margin-bottom:0.5rem;">📱 Send OTP</button>
+    <div id="otpSection" style="display:none;">
+      <input type="text" id="otpInput" class="otp-input" placeholder="Enter OTP" maxlength="6">
+      <button class="btn-primary" id="verifyOtpBtn">✅ Verify OTP</button>
+    </div>
+    <p style="font-size:0.7rem;color:#9ca3af;margin-top:0.8rem;">Demo: Any mobile · OTP: 123456</p>
+  </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="appLayout" class="app-layout" style="display:none;">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <!-- SIDEBAR LOGO - Smaller version -->
+      <svg width="70" height="70" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="border-radius:14px; margin-bottom:0.4rem;">
+        <defs>
+          <linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#d4b860;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#c4a962;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#8b6914;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect fill="url(#goldGrad2)" width="200" height="200" rx="28"/>
+        <rect x="6" y="6" width="188" height="188" rx="24" fill="none" stroke="#f5ecd7" stroke-width="1.5" opacity="0.5"/>
+        <text x="100" y="72" text-anchor="middle" fill="#ffffff" font-size="36" font-weight="900" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="3">ARZIVA</text>
+        <text x="100" y="105" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="700" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="8">ERP</text>
+        <line x1="35" y1="120" x2="165" y2="120" stroke="#f5ecd7" stroke-width="1.5" opacity="0.7"/>
+        <text x="100" y="142" text-anchor="middle" fill="#f5ecd7" font-size="10" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="4" font-weight="600">ACCOUNTING</text>
+        <text x="100" y="157" text-anchor="middle" fill="#f5ecd7" font-size="10" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="4" font-weight="600">SOFTWARE</text>
+        <text x="100" y="178" text-anchor="middle" fill="#f5ecd7" font-size="8" font-family="'Segoe UI', Arial, sans-serif" letter-spacing="5">RELIABLE</text>
+      </svg>
+      <div class="sidebar-biz-name" id="sidebarBizName">Arziva ERP</div>
+      <div class="sidebar-biz-phone" id="sidebarPhone">Accounting Software</div>
+    </div>
+    <button class="sidebar-create-btn" onclick="openSalesModal()">+ Create Sales Invoice</button>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">GENERAL</div>
+      <div class="sidebar-link active" data-module="dashboard" onclick="switchModule('dashboard')"><span class="icon">🏠</span><span>Dashboard</span></div>
+      <div class="sidebar-link" data-module="parties" onclick="switchModule('parties')"><span class="icon">👥</span><span>Parties</span></div>
+      <div class="sidebar-link" data-module="items" onclick="switchModule('items')"><span class="icon">📦</span><span>Items</span></div>
+      <div class="sidebar-section">INVENTORY</div>
+      <div class="sidebar-link" data-module="godown" onclick="switchModule('godown')"><span class="icon">🏭</span><span>Godown</span></div>
+      <div class="sidebar-section">TRANSACTIONS</div>
+      <div class="sidebar-link" data-module="sales" onclick="switchModule('sales')"><span class="icon">🛒</span><span>Sales</span></div>
+      <div class="sidebar-link" data-module="purchase" onclick="switchModule('purchase')"><span class="icon">📋</span><span>Purchases</span></div>
+      <div class="sidebar-section">ANALYTICS</div>
+      <div class="sidebar-link" data-module="reports" onclick="switchModule('reports')"><span class="icon">📊</span><span>Reports</span></div>
+      <div class="sidebar-section">SETTINGS</div>
+      <div class="sidebar-link" data-module="settings" onclick="switchModule('settings')"><span class="icon">⚙️</span><span>Settings</span></div>
+    </nav>
+    <div class="sidebar-footer">🔒 100% Secure · ISO Certified<br>Arziva ERP v2.0</div>
+  </aside>
+
+  <main class="main-area" id="mainArea">
+    <div class="top-bar">
+      <h2 id="pageTitle">📊 Dashboard</h2>
+      <div><span class="badge">Trial Active</span> <span style="font-size:0.7rem;color:var(--text-muted);margin-left:0.5rem;" id="lastUpdate"></span></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="module active">
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-label">📥 To Collect</div><div class="stat-value" style="color:var(--danger);" id="dashCollect">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">📤 To Pay</div><div class="stat-value" style="color:var(--warning);" id="dashPay">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">💰 Total Sales</div><div class="stat-value" style="color:var(--success);" id="dashSales">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">📦 Stock Items</div><div class="stat-value" id="dashItems">0</div></div>
+      </div>
+      <div class="card"><h3>📋 Latest Transactions</h3><div class="list-container" style="max-height:220px;"><table><thead><tr><th>Date</th><th>Type</th><th>TXN No</th><th>Party</th><th>Amount</th><th>Ledger</th></tr></thead><tbody id="latestTxns"></tbody></table></div></div>
+    </div>
+
+    <!-- PARTIES -->
+    <div id="parties" class="module">
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-label">Total Parties</div><div class="stat-value" id="partyCount">0</div></div>
+        <div class="stat-box"><div class="stat-label">To Collect</div><div class="stat-value" style="color:var(--danger);">₹<span id="pCollect">0</span></div></div>
+        <div class="stat-box"><div class="stat-label">To Pay</div><div class="stat-value" style="color:var(--warning);">₹<span id="pPay">0</span></div></div>
+      </div>
+      <div class="flex-row"><input type="text" id="partySearch" placeholder="🔍 Search parties..." oninput="renderParties()"><button class="btn" onclick="openPartyModal()">+ Add Party</button></div>
+      <div class="list-container"><table><thead><tr><th>Party Name</th><th>Category</th><th>Mobile</th><th>Balance</th><th>Ledger</th></tr></thead><tbody id="partyTableBody"></tbody></table></div>
+    </div>
+
+    <!-- ITEMS -->
+    <div id="items" class="module">
+      <div class="stat-row"><div class="stat-box"><div class="stat-label">Stock Value</div><div class="stat-value" id="stockVal">₹0</div></div></div>
+      <div class="flex-row"><input type="text" id="itemSearch" placeholder="🔍 Search items..." oninput="renderItems()"><button class="btn" onclick="openItemModal()">+ Add Item</button></div>
+      <div class="list-container"><table><thead><tr><th>Item Name</th><th>Code</th><th>Stock Qty</th><th>Sell Price</th><th>Purchase Price</th></tr></thead><tbody id="itemTableBody"></tbody></table></div>
+    </div>
+
+    <!-- GODOWN -->
+    <div id="godown" class="module">
+      <div class="card"><h3>🏭 Godown Management</h3><div class="flex-row"><input type="text" id="gName" placeholder="Godown name"><button class="btn" id="addGodownBtn">+ Add</button></div><div class="list-container" id="godownList"></div>
+      <h4 style="margin-top:1rem;">🔄 Stock Transfer</h4><div class="flex-row"><select id="gFrom"><option value="">From</option></select><select id="gTo"><option value="">To</option></select><select id="gItem"><option value="">Item</option></select><input type="number" id="gQty" placeholder="Qty"><button class="btn btn-warning" id="transferBtn">Transfer</button></div><div class="list-container" id="transferLog"></div></div>
+    </div>
+
+    <!-- SALES -->
+    <div id="sales" class="module">
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-label">Total Sales</div><div class="stat-value" style="color:var(--success);" id="sTotal">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">Paid</div><div class="stat-value" style="color:var(--primary);" id="sPaid">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">Unpaid</div><div class="stat-value" style="color:var(--danger);" id="sUnpaid">₹0</div></div>
+      </div>
+      <div class="flex-row"><button class="btn btn-sm">All</button><button class="btn btn-outline btn-sm">Payment In</button><button class="btn btn-outline btn-sm">Sales Return</button><button class="btn btn-outline btn-sm">Credit Note</button></div>
+      <div class="flex-row"><button class="btn" onclick="openSalesModal()">+ Create Sales Invoice</button></div>
+      <div class="list-container"><table><thead><tr><th>Date</th><th>Invoice No</th><th>Party</th><th>Amount</th><th>Status</th><th>Ledger</th></tr></thead><tbody id="salesTableBody"></tbody></table></div>
+    </div>
+
+    <!-- PURCHASE -->
+    <div id="purchase" class="module">
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-label">Total Purchases</div><div class="stat-value" style="color:var(--primary);" id="puTotal">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">Paid</div><div class="stat-value" style="color:var(--success);" id="puPaid">₹0</div></div>
+        <div class="stat-box"><div class="stat-label">Unpaid</div><div class="stat-value" style="color:var(--danger);" id="puUnpaid">₹0</div></div>
+      </div>
+      <div class="flex-row"><button class="btn" onclick="openPurchaseModal()">+ Create Purchase Invoice</button></div>
+      <div class="list-container"><table><thead><tr><th>Date</th><th>Invoice No</th><th>Party</th><th>Amount</th><th>Status</th><th>Ledger</th></tr></thead><tbody id="purchaseTableBody"></tbody></table></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="reports" class="module">
+      <div class="stat-row"><div class="stat-box"><div class="stat-label">Last 7 Days Sales</div><div class="stat-value" id="r7Sales">₹0</div></div><div class="stat-box"><div class="stat-label">Invoices Made</div><div class="stat-value" id="rInvoices">0</div></div></div>
+      <div class="card"><h3>📊 Reports</h3><div class="flex-row">
+        <button class="btn btn-outline btn-sm" onclick="printReport('balance-sheet')">📋 Balance Sheet</button>
+        <button class="btn btn-outline btn-sm" onclick="printReport('gstr1')">📄 GSTR-1</button>
+        <button class="btn btn-outline btn-sm" onclick="printReport('gstr2')">📄 GSTR-2</button>
+        <button class="btn btn-outline btn-sm" onclick="printReport('pnl')">💰 Profit & Loss</button>
+        <button class="btn btn-outline btn-sm" onclick="printReport('daybook')">📖 Daybook</button>
+      </div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="settings" class="module">
+      <div class="card"><h3>⚙️ Business Profile</h3>
+        <div class="form-grid">
+          <div><label>Business Name</label><input type="text" id="sBizName"></div>
+          <div><label>Phone</label><input type="text" id="sPhone"></div>
+          <div><label>Email</label><input type="email" id="sEmail"></div>
+          <div><label>GST No.</label><input type="text" id="sGst"></div>
+          <div style="grid-column:1/-1;"><label>Address</label><textarea id="sAddress" rows="2"></textarea></div>
+          <div><label>State</label><input type="text" id="sState"></div>
+          <div><label>Pincode</label><input type="text" id="sPin"></div>
+        </div>
+        <button class="btn" id="saveSettingsBtn" style="margin-top:0.8rem;">💾 Save</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="partyModal"><div class="modal-box"><h3>➕ Add Party</h3><div class="form-grid"><input type="text" id="pmName" placeholder="Party Name *"><select id="pmCategory"><option value="Customer">Customer</option><option value="Vendor">Vendor</option></select><input type="text" id="pmMobile" placeholder="Mobile *"><input type="text" id="pmShop" placeholder="Shop Name"><input type="text" id="pmWhatsapp" placeholder="WhatsApp"><input type="email" id="pmEmail" placeholder="Email"><input type="text" id="pmAddress" placeholder="Address"><input type="text" id="pmCity" placeholder="City"><input type="text" id="pmState" placeholder="State"><input type="text" id="pmPin" placeholder="PIN"></div><div class="flex-row" style="margin-top:1rem;"><button class="btn" id="savePartyBtn">Save Party</button><button class="btn btn-outline" onclick="closeModal('partyModal')">Cancel</button></div></div></div>
+<div class="modal-overlay" id="itemModal"><div class="modal-box"><h3>📦 Add Item</h3><div class="form-grid"><input type="text" id="imName" placeholder="Item Name *"><input type="text" id="imCode" placeholder="Item Code"><input type="number" id="imQty" placeholder="Opening Qty" step="any"><input type="number" id="imSell" placeholder="Selling Price" step="any"><input type="number" id="imPurchase" placeholder="Purchase Price" step="any"></div><div class="flex-row" style="margin-top:1rem;"><button class="btn" id="saveItemBtn">Save Item</button><button class="btn btn-outline" onclick="closeModal('itemModal')">Cancel</button></div></div></div>
+<div class="modal-overlay" id="salesModal"><div class="modal-box"><h3>🛒 Create Sales Invoice</h3><div class="flex-row"><div class="autocomplete-wrap"><input type="text" id="siParty" placeholder="Search & Select Customer *" autocomplete="off"><div class="autocomplete-dd" id="siPartyDD"></div></div><input type="date" id="siDate"></div><div class="flex-row"><select id="siItem"><option value="">-- Select Item --</option></select><input type="number" id="siQty" placeholder="Qty" value="1" step="any" style="flex:0.5;"><input type="number" id="siRate" placeholder="Rate" step="any" style="flex:0.7;"></div><div class="flex-row"><select id="siStatus"><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select></div><div class="flex-row" style="margin-top:1rem;"><button class="btn" id="saveSalesBtn">Create Invoice</button><button class="btn btn-outline" onclick="closeModal('salesModal')">Cancel</button></div></div></div>
+<div class="modal-overlay" id="purchaseModal"><div class="modal-box"><h3>📋 Create Purchase Invoice</h3><div class="flex-row"><div class="autocomplete-wrap"><input type="text" id="piParty" placeholder="Search & Select Vendor *" autocomplete="off"><div class="autocomplete-dd" id="piPartyDD"></div></div><input type="date" id="piDate"></div><div class="flex-row"><select id="piItem"><option value="">-- Select Item --</option></select><input type="number" id="piQty" placeholder="Qty" value="1" step="any" style="flex:0.5;"><input type="number" id="piRate" placeholder="Rate" step="any" style="flex:0.7;"></div><div class="flex-row"><select id="piStatus"><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select></div><div class="flex-row" style="margin-top:1rem;"><button class="btn" id="savePurchaseBtn">Create Invoice</button><button class="btn btn-outline" onclick="closeModal('purchaseModal')">Cancel</button></div></div></div>
+
+<script>
+(function(){
+  let parties=[], items=[], salesInvoices=[], purchaseInvoices=[], godowns=[{name:'Main Godown',stock:{}}], transfers=[];
+  let sCounter=1, pCounter=1;
+
+  window.handleGoogleLogin=()=>{alert('🔵 Google Login Demo\nYou are now logged in!');loginSuccess();};
+  window.handleMicrosoftLogin=()=>{alert('🔷 Microsoft Login Demo\nYou are now logged in!');loginSuccess();};
+  document.getElementById('sendOtpBtn').addEventListener('click',()=>{
+    const m=document.getElementById('mobileInput').value.trim();
+    if(m.length<10) return alert('Enter valid 10-digit mobile');
+    document.getElementById('otpSection').style.display='block';
+    alert('📱 OTP sent to '+m+'\nDemo OTP: 123456');
+  });
+  document.getElementById('verifyOtpBtn').addEventListener('click',()=>{
+    if(document.getElementById('otpInput').value.trim()==='123456'){alert('✅ Verified! Welcome to Arziva ERP.');loginSuccess();}
+    else alert('❌ Invalid OTP. Try 123456');
+  });
+  function loginSuccess(){document.getElementById('loginPage').style.display='none';document.getElementById('appLayout').style.display='flex';initSample();renderAll();}
+
+  window.switchModule=function(n){
+    document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+    const mod=document.getElementById(n); if(mod) mod.classList.add('active');
+    const link=document.querySelector(`[data-module="${n}"]`); if(link) link.classList.add('active');
+    document.getElementById('pageTitle').innerText={dashboard:'📊 Dashboard',parties:'👥 Parties',items:'📦 Items',godown:'🏭 Godown',sales:'🛒 Sales',purchase:'📋 Purchases',reports:'📊 Reports',settings:'⚙️ Settings'}[n]||'Dashboard';
+    renderAll();
+  };
+
+  window.openPartyModal=()=>document.getElementById('partyModal').classList.add('show');
+  window.openItemModal=()=>document.getElementById('itemModal').classList.add('show');
+  window.openSalesModal=()=>{document.getElementById('salesModal').classList.add('show');refreshSelects();setupAC('siParty','siPartyDD','Customer');};
+  window.openPurchaseModal=()=>{document.getElementById('purchaseModal').classList.add('show');refreshSelects();setupAC('piParty','piPartyDD','Vendor');};
+  window.closeModal=(id)=>document.getElementById(id).classList.remove('show');
+  document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');}));
+
+  function setupAC(inpId,ddId,cat){
+    const inp=document.getElementById(inpId),dd=document.getElementById(ddId);
+    inp.addEventListener('input',function(){
+      const q=this.value.trim().toLowerCase();
+      if(!q){dd.classList.remove('show');return;}
+      const matches=parties.filter(p=>p.category===cat&&p.name.toLowerCase().includes(q));
+      dd.innerHTML=matches.length?matches.map(p=>`<div class="autocomplete-item" data-name="${p.name}">${p.name}<span class="sub">${p.mobile||''}·${p.city||''}</span></div>`).join(''):'<div class="autocomplete-item">No match</div>';
+      dd.classList.add('show');
+    });
+    dd.addEventListener('click',function(e){const it=e.target.closest('.autocomplete-item');if(it&&it.dataset.name){inp.value=it.dataset.name;dd.classList.remove('show');}});
+    inp.addEventListener('blur',()=>setTimeout(()=>dd.classList.remove('show'),200));
+  }
+
+  function refreshSelects(){
+    const io=items.map(i=>`<option value="${i.name}">${i.name}</option>`).join('');
+    document.getElementById('siItem').innerHTML='<option value="">--Select Item--</option>'+io;
+    document.getElementById('piItem').innerHTML='<option value="">--Select Item--</option>'+io;
+    document.getElementById('gItem').innerHTML='<option value="">Item</option>'+io;
+    const go=godowns.map(g=>`<option value="${g.name}">${g.name}</option>`).join('');
+    document.getElementById('gFrom').innerHTML='<option value="">From</option>'+go;
+    document.getElementById('gTo').innerHTML='<option value="">To</option>'+go;
+  }
+
+  function renderAll(){renderDashboard();renderParties();renderItems();renderGodown();renderSales();renderPurchase();renderReports();refreshSelects();document.getElementById('lastUpdate').innerText='Updated: '+new Date().toLocaleString();}
+
+  function renderDashboard(){
+    document.getElementById('dashCollect').innerText='₹'+parties.filter(p=>p.category==='Customer').reduce((s,p)=>s+(p.pending||0),0).toFixed(2);
+    document.getElementById('dashPay').innerText='₹'+parties.filter(p=>p.category==='Vendor').reduce((s,p)=>s+(p.pending||0),0).toFixed(2);
+    document.getElementById('dashSales').innerText='₹'+salesInvoices.reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('dashItems').innerText=items.length;
+    const all=[...salesInvoices.map(s=>({...s,type:'Sales'})),...purchaseInvoices.map(p=>({...p,type:'Purchase'}))];
+    all.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    document.getElementById('latestTxns').innerHTML=all.slice(0,5).map((t,i)=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${t.invoiceNo||'#'+(i+1)}</td><td>${t.party}</td><td>₹${t.total.toFixed(2)}</td><td><button class="btn btn-sm btn-outline" onclick="viewLedger('${t.party}')">📒</button></td></tr>`).join('');
+  }
+
+  function renderParties(){
+    document.getElementById('partyCount').innerText=parties.length;
+    document.getElementById('pCollect').innerText=parties.filter(p=>p.category==='Customer').reduce((s,p)=>s+(p.pending||0),0).toFixed(2);
+    document.getElementById('pPay').innerText=parties.filter(p=>p.category==='Vendor').reduce((s,p)=>s+(p.pending||0),0).toFixed(2);
+    const q=(document.getElementById('partySearch')?.value||'').toLowerCase();
+    document.getElementById('partyTableBody').innerHTML=parties.filter(p=>p.name.toLowerCase().includes(q)).map(p=>`<tr><td>${p.name}${p.shop?'· '+p.shop:''}</td><td>${p.category}</td><td>${p.mobile}</td><td style="color:${(p.pending||0)>=0?'var(--success)':'var(--danger)'}">₹${(p.pending||0).toFixed(2)}</td><td><button class="btn btn-sm btn-outline" onclick="viewLedger('${p.name}')">📒 Ledger</button></td></tr>`).join('');
+  }
+
+  function renderItems(){
+    document.getElementById('stockVal').innerText='₹'+items.reduce((s,i)=>s+(i.qty*(i.sellPrice||0)),0).toFixed(2);
+    const q=(document.getElementById('itemSearch')?.value||'').toLowerCase();
+    document.getElementById('itemTableBody').innerHTML=items.filter(i=>i.name.toLowerCase().includes(q)).map(i=>`<tr><td>${i.name}</td><td>${i.code||'-'}</td><td>${i.qty} PCS</td><td>₹${i.sellPrice||0}</td><td>₹${i.purchasePrice||0}</td></tr>`).join('');
+  }
+
+  function renderGodown(){
+    document.getElementById('godownList').innerHTML=godowns.map((g,i)=>`<div style="display:flex;justify-content:space-between;padding:0.5rem;border-bottom:1px solid var(--border);"><span>🏭 ${g.name}</span><span>Items:${Object.keys(g.stock).length}</span>${godowns.length>1?`<button class="btn btn-sm btn-danger" onclick="removeGodown(${i})">✕</button>`:''}</div>`).join('');
+    document.getElementById('transferLog').innerHTML=transfers.map(t=>`<div style="padding:0.3rem;border-bottom:1px solid var(--border);font-size:0.8rem;">📦${t.item}(${t.qty})·${t.from}→${t.to}·${t.date}</div>`).join('');
+    refreshSelects();
+  }
+  window.removeGodown=(i)=>{if(godowns.length<=1)return alert('Min 1 godown');godowns.splice(i,1);renderGodown();};
+
+  function renderSales(){
+    document.getElementById('sTotal').innerText='₹'+salesInvoices.reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('sPaid').innerText='₹'+salesInvoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('sUnpaid').innerText='₹'+salesInvoices.filter(i=>i.status==='Unpaid').reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('salesTableBody').innerHTML=salesInvoices.map(i=>`<tr><td>${i.date}</td><td>${i.invoiceNo}</td><td>${i.party}</td><td>₹${i.total.toFixed(2)}</td><td><span class="tag ${i.status==='Paid'?'tag-paid':'tag-unpaid'}">${i.status}</span></td><td><button class="btn btn-sm btn-outline" onclick="viewLedger('${i.party}')">📒</button></td></tr>`).join('');
+  }
+
+  function renderPurchase(){
+    document.getElementById('puTotal').innerText='₹'+purchaseInvoices.reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('puPaid').innerText='₹'+purchaseInvoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('puUnpaid').innerText='₹'+purchaseInvoices.filter(i=>i.status==='Unpaid').reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('purchaseTableBody').innerHTML=purchaseInvoices.map(i=>`<tr><td>${i.date}</td><td>${i.invoiceNo}</td><td>${i.party}</td><td>₹${i.total.toFixed(2)}</td><td><span class="tag ${i.status==='Paid'?'tag-paid':'tag-unpaid'}">${i.status}</span></td><td><button class="btn btn-sm btn-outline" onclick="viewLedger('${i.party}')">📒</button></td></tr>`).join('');
+  }
+
+  function renderReports(){
+    document.getElementById('r7Sales').innerText='₹'+salesInvoices.filter(s=>new Date(s.date)>=new Date(Date.now()-7*86400000)).reduce((s,i)=>s+i.total,0).toFixed(2);
+    document.getElementById('rInvoices').innerText=salesInvoices.length;
+  }
+
+  window.viewLedger=function(pn){
+    const ent=[...salesInvoices.filter(s=>s.party===pn).map(s=>({...s,type:'Sales'})),...purchaseInvoices.filter(p=>p.party===pn).map(p=>({...p,type:'Purchase'}))];
+    ent.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    let h=`<div style="font-family:Arial;padding:20px;"><h2>📒 Arziva ERP - Party Ledger</h2><h3>${pn}</h3><table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;"><tr><th>Date</th><th>Type</th><th>Invoice</th><th>Item</th><th>Amount</th><th>Status</th></tr>`;
+    ent.forEach(e=>{h+=`<tr><td>${e.date}</td><td>${e.type}</td><td>${e.invoiceNo||'-'}</td><td>${e.item||'-'}</td><td>₹${e.total.toFixed(2)}</td><td>${e.status||'-'}</td></tr>`;});
+    const bal=ent.reduce((s,e)=>s+(e.type==='Sales'?e.total:-e.total),0);
+    h+=`<tr style="font-weight:bold;"><td colspan="4">Net Balance</td><td style="color:${bal>=0?'green':'red'}">₹${bal.toFixed(2)}</td><td></td></tr></table></div>`;
+    const w=window.open('','Ledger','width=750,height=500');w.document.write(h);w.document.close();
+  };
+
+  window.printReport=(t)=>{const w=window.open('','','width=700,height=500');w.document.write(`<h2>Arziva ERP - ${t.toUpperCase()}</h2><p>Generated: ${new Date().toLocaleString()}</p>`);w.document.close();setTimeout(()=>w.print(),500);};
+
+  document.getElementById('savePartyBtn').addEventListener('click',()=>{
+    const n=document.getElementById('pmName').value.trim(),m=document.getElementById('pmMobile').value.trim();
+    if(!n||!m)return alert('Name & Mobile required');
+    parties.push({name:n,category:document.getElementById('pmCategory').value,mobile:m,shop:document.getElementById('pmShop').value.trim(),whatsapp:document.getElementById('pmWhatsapp').value.trim(),email:document.getElementById('pmEmail').value.trim(),address:document.getElementById('pmAddress').value.trim(),city:document.getElementById('pmCity').value.trim(),state:document.getElementById('pmState').value.trim(),pin:document.getElementById('pmPin').value.trim(),pending:0});
+    ['pmName','pmMobile','pmShop','pmWhatsapp','pmEmail','pmAddress','pmCity','pmState','pmPin'].forEach(id=>document.getElementById(id).value='');
+    closeModal('partyModal');renderAll();
+  });
+  document.getElementById('saveItemBtn').addEventListener('click',()=>{
+    const n=document.getElementById('imName').value.trim();if(!n)return alert('Item name required');
+    items.push({name:n,code:document.getElementById('imCode').value.trim(),qty:parseFloat(document.getElementById('imQty').value)||0,sellPrice:parseFloat(document.getElementById('imSell').value)||0,purchasePrice:parseFloat(document.getElementById('imPurchase').value)||0});
+    ['imName','imCode','imQty','imSell','imPurchase'].forEach(id=>document.getElementById(id).value='');
+    closeModal('itemModal');renderAll();
+  });
+  document.getElementById('saveSalesBtn').addEventListener('click',()=>{
+    const p=document.getElementById('siParty').value.trim(),it=document.getElementById('siItem').value,q=parseFloat(document.getElementById('siQty').value),r=parseFloat(document.getElementById('siRate').value),d=document.getElementById('siDate').value||new Date().toISOString().split('T')[0],st=document.getElementById('siStatus').value;
+    if(!p||!it||isNaN(q)||isNaN(r)||q<=0)return alert('Fill all fields');
+    const t=q*r;
+    salesInvoices.push({party:p,item:it,qty:q,rate:r,total:t,date:d,status:st,invoiceNo:'NQ'+sCounter++});
+    const fi=items.find(i=>i.name===it);if(fi)fi.qty=Math.max(0,fi.qty-q);
+    const fp=parties.find(x=>x.name===p);if(fp&&st==='Unpaid')fp.pending=(fp.pending||0)+t;
+    document.getElementById('siParty').value='';document.getElementById('siQty').value='1';document.getElementById('siRate').value='';
+    closeModal('salesModal');renderAll();
+  });
+  document.getElementById('savePurchaseBtn').addEventListener('click',()=>{
+    const p=document.getElementById('piParty').value.trim(),it=document.getElementById('piItem').value,q=parseFloat(document.getElementById('piQty').value),r=parseFloat(document.getElementById('piRate').value),d=document.getElementById('piDate').value||new Date().toISOString().split('T')[0],st=document.getElementById('piStatus').value;
+    if(!p||!it||isNaN(q)||isNaN(r)||q<=0)return alert('Fill all fields');
+    const t=q*r;
+    purchaseInvoices.push({party:p,item:it,qty:q,rate:r,total:t,date:d,status:st,invoiceNo:'PQ'+pCounter++});
+    let fi=items.find(i=>i.name===it);if(fi)fi.qty+=q;else items.push({name:it,qty:q,code:'',sellPrice:r,purchasePrice:r});
+    const fp=parties.find(x=>x.name===p);if(fp&&st==='Unpaid')fp.pending=(fp.pending||0)-t;
+    document.getElementById('piParty').value='';document.getElementById('piQty').value='1';document.getElementById('piRate').value='';
+    closeModal('purchaseModal');renderAll();
+  });
+  document.getElementById('addGodownBtn').addEventListener('click',()=>{const n=document.getElementById('gName').value.trim();if(!n)return alert('Enter name');godowns.push({name:n,stock:{}});document.getElementById('gName').value='';renderGodown();});
+  document.getElementById('transferBtn').addEventListener('click',()=>{
+    const f=document.getElementById('gFrom').value,t=document.getElementById('gTo').value,i=document.getElementById('gItem').value,q=parseFloat(document.getElementById('gQty').value);
+    if(!f||!t||!i||isNaN(q)||q<=0||f===t)return alert('Invalid');
+    const fg=godowns.find(g=>g.name===f),tg=godowns.find(g=>g.name===t);
+    if(!fg||!tg)return alert('Godown not found');
+    if(!fg.stock[i])fg.stock[i]=0;if(!tg.stock[i])tg.stock[i]=0;
+    if(fg.stock[i]<q)return alert('Insufficient stock');
+    fg.stock[i]-=q;tg.stock[i]+=q;
+    transfers.push({from:f,to:t,item:i,qty:q,date:new Date().toISOString().split('T')[0]});
+    document.getElementById('gQty').value='';renderGodown();
+  });
+  document.getElementById('saveSettingsBtn').addEventListener('click',()=>{
+    const n=document.getElementById('sBizName').value.trim();
+    if(n){document.getElementById('sidebarBizName').innerText=n;document.getElementById('sidebarPhone').innerText=document.getElementById('sPhone').value||'Accounting Software';}
+    alert('✅ Profile saved!');
+  });
+
+  function initSample(){
+    if(parties.length===0){parties.push({name:'Cash Sale',category:'Customer',mobile:'-',pending:0});parties.push({name:'Colour Dot',category:'Vendor',mobile:'7978720020',pending:335.96});parties.push({name:'Grand Book Store',category:'Customer',mobile:'9337881463',pending:0});parties.push({name:'S N Fragrance',category:'Vendor',mobile:'-',pending:0});}
+    if(items.length===0){items.push({name:'1001 Night 100ml',code:'N100',qty:1,sellPrice:1200,purchasePrice:990});items.push({name:'1001 Night 3ml',code:'N003',qty:5,sellPrice:60,purchasePrice:33.7});items.push({name:'4G 100ml Fragrance',code:'4G100',qty:1,sellPrice:750,purchasePrice:590});}
+    if(salesInvoices.length===0){salesInvoices.push({party:'Grand Book Store',item:'1001 Night 3ml',qty:1,rate:164.04,total:164.04,date:'2026-02-09',status:'Paid',invoiceNo:'NQ1'});sCounter=2;}
+    if(purchaseInvoices.length===0){purchaseInvoices.push({party:'Colour Dot',item:'1001 Night 100ml',qty:1,rate:1500,total:1500,date:'2025-12-20',status:'Paid',invoiceNo:'PQ1'});purchaseInvoices.push({party:'S N Fragrance',item:'1001 Night 3ml',qty:10,rate:758,total:7580,date:'2025-09-30',status:'Paid',invoiceNo:'PQ2'});pCounter=3;}
+  }
+})();
+</script>
+</body>
+</html>
